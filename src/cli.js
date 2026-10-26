@@ -3,7 +3,7 @@
  * axuse — CLI.
  *
  *   axuse mcp          run the MCP server on stdio (default)
- *   axuse print-config emit harness config for: codex | claude-code | opencode | agy | generic
+ *   axuse print-config emit harness config for: codex | claude-code | opencode | agy | zed | generic
  *   axuse doctor       environment + smoke-test check
  *   axuse setup        guided native-host + extension setup
  *   axuse open-urls    bounded URL inspection report
@@ -54,7 +54,7 @@ Usage:
   axuse bridge uninstall [--browser chrome|edge|chromium|chrome-for-testing]
   axuse bridge status
 
-Harnesses: codex, claude-code, opencode, agy, generic`);
+Harnesses: codex, claude-code, opencode, agy, zed, generic`);
 }
 
 function commandVector() {
@@ -82,6 +82,10 @@ ${JSON.stringify({ mcpServers: { axuse: { type: "stdio", command: cmd, args: vec
     case "opencode":
       console.log(`# OpenCode — merge into opencode.json
 ${JSON.stringify({ mcp: { axuse: { type: "local", command: [cmd, ...vec] } } }, null, 2)}`);
+      break;
+    case "zed":
+      console.log(`# Zed — merge into settings.json under context_servers:
+${JSON.stringify({ context_servers: { axuse: { command: { path: cmd, args: vec } } } }, null, 2)}`);
       break;
     case "agy":
       console.log(`# Antigravity — register this as an MCP server in the agent's MCP settings
