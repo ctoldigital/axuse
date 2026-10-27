@@ -70,15 +70,21 @@ public class AxWin {
     m.dwFlags = down; Send((int)INPUT_MOUSE, m);
     m.dwFlags = up;   Send((int)INPUT_MOUSE, m);
   }
-  public static void ClickButton(string button, bool dbl) {
+  public static void PressPair(uint down, uint up, int intervalMs) {
+    MOUSEINPUT m = new MOUSEINPUT();
+    m.dwFlags = down; Send((int)INPUT_MOUSE, m);
+    if (intervalMs > 0) System.Threading.Thread.Sleep(intervalMs);
+    m.dwFlags = up;   Send((int)INPUT_MOUSE, m);
+  }
+  public static void ClickButton(string button, bool dbl, int intervalMs) {
     uint down, up;
     switch (button) {
       case "right":  down = MOUSEEVENTF_RIGHTDOWN;  up = MOUSEEVENTF_RIGHTUP;  break;
       case "middle": down = MOUSEEVENTF_MIDDLEDOWN; up = MOUSEEVENTF_MIDDLEUP; break;
       default:       down = MOUSEEVENTF_LEFTDOWN;   up = MOUSEEVENTF_LEFTUP;   break;
     }
-    Button(down, up);
-    if (dbl) { System.Threading.Thread.Sleep(30); Button(down, up); }
+    PressPair(down, up, intervalMs);
+    if (dbl) { System.Threading.Thread.Sleep(Math.Max(30, intervalMs)); PressPair(down, up, intervalMs); }
   }
   public static void Wheel(int dx, int dy) {
     if (dy != 0) {
@@ -177,7 +183,8 @@ function Invoke-Op($req) {
     'move'   { [void][AxWin]::SetCursorPos([int]$req.x, [int]$req.y); @{ ok = $true } }
     'click'  {
       [void][AxWin]::SetCursorPos([int]$req.x, [int]$req.y)
-      [AxWin]::ClickButton([string]$req.button, [bool]$req.double)
+      $interval = if ($null -ne $req.interval_ms) { [int]$req.interval_ms } else { 0 }
+      [AxWin]::ClickButton([string]$req.button, [bool]$req.double, $interval)
       @{ ok = $true }
     }
     'down'   {

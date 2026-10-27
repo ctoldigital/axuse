@@ -48,6 +48,15 @@ function exactBase64Bytes(b64) {
   return Buffer.byteLength(Buffer.from(b64, "base64"));
 }
 
+/** Pointer-event pacing validation, mirroring the macOS driver's timing
+ *  controls: 0–1000 ms between events, typed COMMAND_REJECTED otherwise. */
+function pointerInterval(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1000) {
+    throw new AxError(Codes.COMMAND_REJECTED, "interval_ms must be between 0 and 1000", { retry: "never" });
+  }
+  return value;
+}
+
 /** Resident Windows driver: one PowerShell process, one op at a time. */
 class WindowsDriver {
   constructor() {
@@ -165,8 +174,11 @@ class WindowsDriver {
     return { action_sent: "sent" };
   }
 
-  async click({ x, y, button = "left", double = false } = {}) {
-    await this.check(this.op({ op: "click", x, y, button, double }));
+  async click({ x, y, button = "left", double = false, interval_ms = 0 } = {}) {
+    interval_ms = pointerInterval(interval_ms);
+    // interval_ms is slept inside the resident PS process between down and up,
+    // keeping the press a single atomic gesture (like the macOS JXA delay()).
+    await this.check(this.op({ op: "click", x, y, button, double, interval_ms }));
     return { action_sent: "sent" };
   }
 
@@ -227,14 +239,30 @@ class WindowsDriver {
     return { action_sent: "sent", combo };
   }
 
-  /** Drag via move/down/move/up (interpolated like the browser actuator). */
-  async drag({ from, to, steps = 12 } = {}) {
+  /** Drag via move/down/move/up (interpolated like the browser actuator).
+   *  interval_ms paces the gesture — after the press, between interpolated
+   *  moves, and before the release — mirroring the macOS timing controls.
+   *  The steps × interval_ms budget keeps a paced drag bounded in time. */
+  async drag({ from, to, steps = 12, interval_ms = 0 } = {}) {
+    interval_ms = pointerInterval(interval_ms);
+    const requestedSteps = steps;
+    if (typeof requestedSteps !== "number" || !Number.isFinite(requestedSteps) || requestedSteps < 1) {
+      throw new AxError(Codes.COMMAND_REJECTED, "steps must be ≥ 1", { retry: "never" });
+    }
+    const count = Math.round(requestedSteps);
+    if (count < 1) throw new AxError(Codes.COMMAND_REJECTED, "steps must round to at least 1", { retry: "never" });
+    if (count * interval_ms > 12000) throw new AxError(Codes.COMMAND_REJECTED, "steps × interval_ms must be ≤ 12000", { retry: "never" });
+    if (count > 200) throw new AxError(Codes.COMMAND_REJECTED, "steps must be ≤ 200", { retry: "never" });
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     await this.move(from.x, from.y);
     await this.down("left");
-    for (let i = 1; i <= steps; i++) {
-      const x = Math.round(from.x + ((to.x - from.x) * i) / steps);
-      const y = Math.round(from.y + ((to.y - from.y) * i) / steps);
-      await this.move(x, y);
+    if (interval_ms) await sleep(interval_ms);
+    for (let i = 1; i <= count; i++) {
+      await this.move(
+        Math.round(from.x + ((to.x - from.x) * i) / count),
+        Math.round(from.y + ((to.y - from.y) * i) / count),
+      );
+      if (interval_ms) await sleep(interval_ms);
     }
     await this.up("left");
     return { action_sent: "sent" };

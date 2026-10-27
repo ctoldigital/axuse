@@ -527,3 +527,32 @@ test("macOS pointer timing is inserted between events and validated", async () =
   await assert.rejects(() => d.click({ x: 1, y: 2, interval_ms: -1 }), (e) => e.code === "COMMAND_REJECTED");
   await assert.rejects(() => d.drag({ from: { x: 1, y: 2 }, to: { x: 3, y: 4 }, steps: 200, interval_ms: 100 }), (e) => e.code === "COMMAND_REJECTED");
 });
+
+test("Windows pointer timing is passed through, paced and validated", { skip: !isWindows }, async (t) => {
+  // Passive: op() is stubbed so no input is synthesized; timing is asserted
+  // from the recorded op stream and the wall clock the sleeps account for.
+  const d = getDesktopDriver();
+  const calls = [];
+  const realOp = d.op.bind(d);
+  d.op = async (payload) => { calls.push(payload); return { ok: true }; };
+  t.after(() => { d.op = realOp; d.dispose(); });
+
+  await d.click({ x: 4, y: 5, interval_ms: 40 });
+  assert.equal(calls[0].op, "click");
+  assert.equal(calls[0].interval_ms, 40, "click interval_ms reaches the PS driver");
+
+  calls.length = 0;
+  const steps = 8, interval = 25;
+  const t0 = Date.now();
+  await d.drag({ from: { x: 100, y: 100 }, to: { x: 300, y: 200 }, steps, interval_ms: interval });
+  const elapsed = Date.now() - t0;
+  assert.deepEqual(calls.map((c) => c.op), ["move", "down", ...Array(steps).fill("move"), "up"]);
+  // 9 sleeps (after press + after each move) ≥ 8 × 25ms; sloppy-timer margin.
+  assert.ok(elapsed >= steps * interval, `drag elapsed ${elapsed}ms, expected ≥ ${steps * interval}ms of pacing`);
+
+  await assert.rejects(() => d.click({ x: 1, y: 2, interval_ms: -1 }), (e) => e.code === "COMMAND_REJECTED");
+  await assert.rejects(() => d.click({ x: 1, y: 2, interval_ms: 1001 }), (e) => e.code === "COMMAND_REJECTED");
+  await assert.rejects(() => d.drag({ from: { x: 1, y: 2 }, to: { x: 3, y: 4 }, steps: 0 }), (e) => e.code === "COMMAND_REJECTED");
+  await assert.rejects(() => d.drag({ from: { x: 1, y: 2 }, to: { x: 3, y: 4 }, steps: 201 }), (e) => e.code === "COMMAND_REJECTED");
+  await assert.rejects(() => d.drag({ from: { x: 1, y: 2 }, to: { x: 3, y: 4 }, steps: 200, interval_ms: 100 }), (e) => e.code === "COMMAND_REJECTED");
+});
