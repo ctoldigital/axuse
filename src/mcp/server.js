@@ -215,7 +215,7 @@ export async function createServer({ controller = new Controller(), desktop, sol
         return { content: [{ type: "text", text: JSON.stringify({ ...info, note }) }] };
       }
       case "click": {
-        const r = await d.click({ x: args.x, y: args.y, button: args.button, double: args.double });
+        const r = await d.click({ x: args.x, y: args.y, button: args.button, double: args.double, interval_ms: args.interval_ms });
         return { content: [{ type: "text", text: JSON.stringify(r) }] };
       }
       case "type":
@@ -237,7 +237,7 @@ export async function createServer({ controller = new Controller(), desktop, sol
       case "ax_set":
         return { content: [{ type: "text", text: JSON.stringify(await d.axSet({ ref: args.ref, value: args.value, pid: args.pid, name: args.name, front: args.front })) }] };
       case "drag":
-        return { content: [{ type: "text", text: JSON.stringify(await d.drag({ from: args.from, to: args.to })) }] };
+        return { content: [{ type: "text", text: JSON.stringify(await d.drag({ from: args.from, to: args.to, steps: args.steps, interval_ms: args.interval_ms })) }] };
       default:
         throw new AxError("INTERNAL", `unroutable desktop op ${tool._op}`);
     }

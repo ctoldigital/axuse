@@ -514,3 +514,16 @@ test("macOS ax ops fail typed without Accessibility (live, denial path)", { skip
     (e) => e.code === "DESKTOP_PERMISSION_REQUIRED" && /Accessibility/.test(e.message) === true,
   );
 });
+
+test("macOS pointer timing is inserted between events and validated", async () => {
+  const calls = [];
+  const d = new MacDriver({ runFn: async (file, args) => { calls.push({ file, args }); return "ok"; } });
+  await d.click({ x: 4, y: 5, interval_ms: 40 });
+  assert.match(calls[0].args.at(-1), /delay\(0\.04\)/);
+  calls.length = 0;
+  await d.drag({ from: { x: 1, y: 2 }, to: { x: 10, y: 20 }, steps: 3, interval_ms: 1 });
+  assert.match(calls[1].args.at(-1), /delay\(0\.001\)/);
+  assert.match(calls[2].args.at(-1), /kCGEventLeftMouseUp/);
+  await assert.rejects(() => d.click({ x: 1, y: 2, interval_ms: -1 }), (e) => e.code === "COMMAND_REJECTED");
+  await assert.rejects(() => d.drag({ from: { x: 1, y: 2 }, to: { x: 3, y: 4 }, steps: 200, interval_ms: 100 }), (e) => e.code === "COMMAND_REJECTED");
+});

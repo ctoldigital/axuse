@@ -75,6 +75,13 @@ function finite(value, name) {
   return value;
 }
 
+function pointerInterval(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1000) {
+    throw new AxError(Codes.COMMAND_REJECTED, "interval_ms must be between 0 and 1000", { retry: "never" });
+  }
+  return value;
+}
+
 function positive(value, name) {
   const n = finite(value, name);
   if (n < 1) throw new AxError(Codes.BAD_COORDS, `${name} must be ≥ 1`, { retry: "never" });
@@ -172,7 +179,7 @@ function mouseButtonFor(kind) {
       : MOUSE_BUTTONS.left;
 }
 
-function nativeEventCode(events, { post = true } = {}) {
+function nativeEventCode(events, { post = true, intervalMs = 0 } = {}) {
   const body = events.map((item, i) => {
     if (item.kind === "scroll") {
       const horizontal = item.dx !== 0;
@@ -195,7 +202,7 @@ function nativeEventCode(events, { post = true } = {}) {
       var e${i} = $.CGEventCreateMouseEvent(null, ${event}, $.CGPointMake(${item.x}, ${item.y}), ${button});
       if (!e${i}) throw new Error('CGEventCreateMouseEvent returned null');${clickState}
       ${post ? `$.CGEventPost($.kCGHIDEventTap, e${i});` : ""}`;
-  }).join("\n");
+  }).join(intervalMs ? `\ndelay(${intervalMs / 1000});\n` : "\n");
   return `
     ${post ? "ObjC.import('ApplicationServices'); if (!$.AXIsProcessTrusted()) throw new Error('Accessibility permission required');" : ""}
     ObjC.import('CoreGraphics');
@@ -715,7 +722,8 @@ export class MacDriver {
     return { action_sent: "sent" };
   }
 
-  async click({ x, y, button = "left", double = false } = {}) {
+  async click({ x, y, button = "left", double = false, interval_ms = 0 } = {}) {
+    interval_ms = pointerInterval(interval_ms);
     x = finite(x, "x"); y = finite(y, "y");
     const b = buttonSpec(button);
     const down = b === "right" ? "rdown" : b === "middle" ? "mdown" : "down";
@@ -727,17 +735,19 @@ export class MacDriver {
       { kind: down, x, y, clickState: 1 }, { kind: up, x, y, clickState: 1 },
     ];
     if (double) events.push({ kind: down, x, y, clickState: 2 }, { kind: up, x, y, clickState: 2 });
-    await this._serialized(() => this.jxa(mouseSequenceCode(events)));
+    await this._serialized(() => this.jxa(mouseSequenceCode(events, { intervalMs: interval_ms })));
     return { action_sent: "sent" };
   }
 
-  async drag({ from, to, steps = 12 } = {}) {
+  async drag({ from, to, steps = 12, interval_ms = 0 } = {}) {
+    interval_ms = pointerInterval(interval_ms);
     const start = { x: finite(from?.x, "from.x"), y: finite(from?.y, "from.y") };
     const end = { x: finite(to?.x, "to.x"), y: finite(to?.y, "to.y") };
     const requestedSteps = finite(steps, "steps");
     if (requestedSteps < 1) throw new AxError(Codes.COMMAND_REJECTED, "steps must be ≥ 1", { retry: "never" });
     const count = Math.round(requestedSteps);
     if (count < 1) throw new AxError(Codes.COMMAND_REJECTED, "steps must round to at least 1", { retry: "never" });
+    if (count * interval_ms > 12000) throw new AxError(Codes.COMMAND_REJECTED, "steps × interval_ms must be ≤ 12000", { retry: "never" });
     if (count > 200) throw new AxError(Codes.COMMAND_REJECTED, "steps must be ≤ 200", { retry: "never" });
     await this._serialized(async () => {
       let held = false;
@@ -745,15 +755,17 @@ export class MacDriver {
         // Hover + press in one script: the gesture stays atomic up to the hold.
         await this.jxa(mouseSequenceCode([
           { kind: "moved", x: start.x, y: start.y }, { kind: "down", x: start.x, y: start.y },
-        ]));
+        ], { intervalMs: interval_ms }));
         held = true;
+        if (interval_ms) await new Promise((resolve) => setTimeout(resolve, interval_ms));
         const moves = [];
         for (let i = 1; i <= count; i++) moves.push({
           kind: "drag",
           x: Math.round(start.x + ((end.x - start.x) * i) / count),
           y: Math.round(start.y + ((end.y - start.y) * i) / count),
         });
-        await this.jxa(mouseSequenceCode(moves));
+        await this.jxa(mouseSequenceCode(moves, { intervalMs: interval_ms }));
+        if (interval_ms) await new Promise((resolve) => setTimeout(resolve, interval_ms));
       } finally {
         // The release runs in the SAME chain slot — a held button can never
         // leak past this call, and no queued gesture can interleave with it.

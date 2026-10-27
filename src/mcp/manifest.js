@@ -119,6 +119,7 @@ export function desktopTools(driverAvailable, axCapable = false) {
           x: { type: "number" }, y: { type: "number" },
           button: { type: "string", enum: ["left", "right", "middle"] },
           double: { type: "boolean" },
+          interval_ms: { type: "number", minimum: 0, maximum: 1000, description: "macOS: delay between pointer events in milliseconds (default 0)." },
         },
         required: ["x", "y"], additionalProperties: false,
       },
@@ -170,6 +171,8 @@ export function desktopTools(driverAvailable, axCapable = false) {
         properties: {
           from: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } }, required: ["x", "y"], additionalProperties: false },
           to: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } }, required: ["x", "y"], additionalProperties: false },
+          steps: { type: "integer", minimum: 1, maximum: 200, description: "Number of interpolated moves (default 12)." },
+          interval_ms: { type: "number", minimum: 0, maximum: 1000, description: "macOS: delay between pointer events in milliseconds (default 0; steps × interval_ms ≤ 12000)." },
         },
         required: ["from", "to"],
         additionalProperties: false,
