@@ -1,0 +1,90 @@
+{
+ "started": "2026-10-26T00:58:55",
+ "tasks": [
+  {
+   "name": "wifi toggle round-trip",
+   "ok": true,
+   "note": "wi-fi True→False→True",
+   "ms": 3977,
+   "calls": 4,
+   "tokens": 1837
+  },
+  {
+   "name": "settings search + filter",
+   "ok": true,
+   "note": "search filtered to Battery results",
+   "ms": 5855,
+   "calls": 4,
+   "tokens": 2781
+  },
+  {
+   "name": "about-phone data extraction",
+   "ok": true,
+   "note": "model='SM-G990B2/DS'",
+   "ms": 10682,
+   "calls": 3,
+   "tokens": 2135
+  },
+  {
+   "name": "navigate to Dark mode",
+   "ok": true,
+   "note": "search 'dark' surfaced the Dark mode setting",
+   "ms": 5241,
+   "calls": 3,
+   "tokens": 2886
+  },
+  {
+   "name": "contacts: create + verify",
+   "ok": true,
+   "note": "created 'Ax Test', guard refused the delete, confirmed → deleted",
+   "ms": 14717,
+   "calls": 6,
+   "tokens": 4060
+  },
+  {
+   "name": "play store search",
+   "ok": null,
+   "note": "no store search field (skipped)",
+   "ms": 5636,
+   "calls": 2,
+   "tokens": 1323
+  },
+  {
+   "name": "guard refuses 'Reset'",
+   "ok": true,
+   "note": "risk-labelled 'Reset' refused without confirm (never confirmed)",
+   "ms": 18614,
+   "calls": 4,
+   "tokens": 1975
+  },
+  {
+   "name": "5-step plan (phone_run)",
+   "ok": true,
+   "note": "5-step plan, one round trip",
+   "ms": 3813,
+   "calls": 1,
+   "tokens": 700
+  },
+  {
+   "name": "messages: typed draft",
+   "ok": true,
+   "note": "search typed + verified (no compose FAB: not the default SMS app)",
+   "ms": 6203,
+   "calls": 3,
+   "tokens": 1894
+  }
+ ],
+ "ok": true,
+ "passed": 8,
+ "failed": 0,
+ "skipped": 1,
+ "total_ms": 74738,
+ "total_tokens": 19591,
+ "button_latency_ms": [
+  603,
+  606,
+  645,
+  592
+ ],
+ "summary": "8/8 passed, 1 skipped, 0 failed · 74.7s total · 19591 tokens of tool output"
+}

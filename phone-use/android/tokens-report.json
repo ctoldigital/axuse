@@ -1,0 +1,94 @@
+{
+ "device": null,
+ "method": "tokens = ceil(chars/4)",
+ "screens": [
+  {
+   "screen": "launcher",
+   "app": "com.sec.android.app.launcher",
+   "nodes": 134,
+   "compact_chars": 2636,
+   "compact_tokens": 659,
+   "verbose_chars": 4827,
+   "verbose_tokens": 1207,
+   "observe_ms": 56.3
+  },
+  {
+   "screen": "settings root",
+   "app": "com.android.settings",
+   "nodes": 134,
+   "compact_chars": 3305,
+   "compact_tokens": 827,
+   "verbose_chars": 5487,
+   "verbose_tokens": 1372,
+   "observe_ms": 33.8
+  },
+  {
+   "screen": "settings subpage (About phone)",
+   "app": "com.android.settings",
+   "nodes": 161,
+   "compact_chars": 4380,
+   "compact_tokens": 1095,
+   "verbose_chars": 6562,
+   "verbose_tokens": 1641,
+   "observe_ms": 437.6
+  },
+  {
+   "screen": "messages list",
+   "app": "com.google.android.apps.messaging",
+   "nodes": 97,
+   "compact_chars": 2021,
+   "compact_tokens": 506,
+   "verbose_chars": 4203,
+   "verbose_tokens": 1051,
+   "observe_ms": 55.0
+  },
+  {
+   "screen": "camera list",
+   "app": "com.sec.android.gallery3d",
+   "nodes": 152,
+   "compact_chars": 4753,
+   "compact_tokens": 1189,
+   "verbose_chars": 6935,
+   "verbose_tokens": 1734,
+   "observe_ms": 52.1
+  }
+ ],
+ "screen_tokens_compact": [
+  659,
+  827,
+  1095,
+  506,
+  1189
+ ],
+ "screen_tokens_verbose": [
+  1207,
+  1372,
+  1641,
+  1051,
+  1734
+ ],
+ "median_compact": 827,
+ "median_verbose": 1372,
+ "reduction_pct": 39.7,
+ "action_diffs": [
+  {
+   "action": "tap Connections",
+   "tokens": 790,
+   "ms": 736.0,
+   "via": "ax-click-ancestor"
+  },
+  {
+   "action": "back",
+   "tokens": 794,
+   "ms": 546.2,
+   "via": "global"
+  },
+  {
+   "action": "observe (after-action alternative: full re-dump)",
+   "tokens": 780,
+   "ms": 47.1,
+   "via": "compact-render"
+  }
+ ],
+ "median_observe_ms": 55.0
+}

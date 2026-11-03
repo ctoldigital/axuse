@@ -1,0 +1,16 @@
+[project]
+name = "axdroid"
+version = "0.1.0"
+description = "axuse phone-use for Android — accessibility-tree phone control with no vision model; the phone app is the hub"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+axdroid = "axdroid.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["axdroid"]

@@ -20,6 +20,8 @@ agent, paste the [install prompt](https://ax-use.com/install.md) and the
 agent sets axuse up for you. See the
 [non-developer guide](docs/non-developer-onboarding.md).
 
+**On Android too.** [axdroid](phone-use/android/README.md) is the same idea for a phone: it reads the screen through Android's accessibility tree, with no screenshots, and completed 116 of 116 AndroidWorld tasks in a single pass ([results](phone-use/android/androidworld/README.md)). Paste *Install axdroid by following https://ax-use.com/install-phone.md* into your agent to set it up. axphone for iPhone is coming soon.
+
 ## Proven in production
 
 axuse is maintained by **CTOL Digital Solutions**

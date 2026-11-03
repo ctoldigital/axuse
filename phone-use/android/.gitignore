@@ -1,0 +1,14 @@
+# build artifacts (rebuild with tools/build-apk.ps1)
+app/build/
+debug.keystore
+
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+
+androidworld/out/
+
+# run output (agent work dirs hold a copy of your Codex login: never commit)
+/out/
+androidworld/out/

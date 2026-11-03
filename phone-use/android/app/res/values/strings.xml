@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">axuse axdroid</string>
+    <string name="service_name">axdroid agent bridge</string>
+    <string name="service_desc">Lets an AI agent you pair read this phone\'s screen structure and operate apps through Android accessibility. No screenshots ever leave the phone.</string>
+    <string name="service_summary">AI agent control (owner-paired)</string>
+</resources>
