@@ -85,6 +85,19 @@ test("posture: webrtc classification — mDNS/private candidates never leak, pub
     { ip: "fe80::1", typ: "host" },
   ]), [], "mDNS and private IPs are a real VPN shape, not leaks");
   assert.deepEqual(publicIpCandidates([{ ip: "79.127.184.170", typ: "srflx" }]), [{ ip: "79.127.184.170", typ: "srflx" }]);
+  // IPv6 is not uniformly "local": only link-local/ULA/loopback are a VPN
+  // shape. A routable IPv6 address is a leak exactly like a public IPv4 one.
+  assert.deepEqual(publicIpCandidates([
+    { ip: "::1", typ: "host" },
+    { ip: "fe80::a1b2:c3d4", typ: "host" },
+    { ip: "fc00::1", typ: "host" },
+    { ip: "fdab:cdef::1", typ: "host" },
+  ]), [], "IPv6 loopback, link-local and unique-local are private, not leaks");
+  assert.deepEqual(
+    publicIpCandidates([{ ip: "2001:4860:4860::8888", typ: "srflx" }]),
+    [{ ip: "2001:4860:4860::8888", typ: "srflx" }],
+    "a routable (public) IPv6 candidate is a leak beside a proxied exit",
+  );
   // The judge: leak → warn beside a proxied exit; clean → pass; unprobed → info.
   const proxied = { posture: "headed", egress: "http://1.2.3.4:8080" };
   const leak = judgePosture({ facts: { ...GOOD_FACTS, webrtcSupported: true }, posture: proxied, webrtc: { supported: true, candidates: [{ ip: "79.127.184.170", typ: "srflx" }] } }, {});

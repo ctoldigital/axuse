@@ -77,12 +77,26 @@ export const WEBRTC_EXPRESSION = `(async () => {
   return { supported: true, candidates: cands };
 })()`;
 
+/** fe80::/10 (link-local), fc00::/7 (unique-local/ULA) and ::1 (loopback) —
+ *  the private IPv6 ranges. Anything else with a colon is a routable IPv6
+ *  address and, same as a public IPv4, a real leak beside a proxied exit. */
+function isPrivateIPv6(ip) {
+  const lc = ip.toLowerCase();
+  if (lc === "::1" || lc === "::") return true;
+  const first = lc.split(":")[0];
+  return /^fe[89ab]/.test(first) || /^f[cd]/.test(first);
+}
+
 /** Private-IP and mDNS classification: a candidate is a PERSONA CONTRADICTION
  *  only when it carries a public, non-mDNS address next to a proxied exit. */
 export function publicIpCandidates(candidates) {
   return (candidates ?? []).filter((c) => {
     const ip = String(c.ip ?? "");
-    if (ip.endsWith(".local") || ip.includes(":")) return false; // mDNS / IPv6 local
+    if (ip.endsWith(".local")) return false; // mDNS host candidate
+    // IPv6 — every address contains a colon, but only the private ranges
+    // (link-local, ULA, loopback) are a VPN shape; a routable IPv6 address
+    // beside a proxied exit leaks the real interface exactly like IPv4 does.
+    if (ip.includes(":")) return !isPrivateIPv6(ip);
     const m = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.exec(ip);
     if (!m) return false;
     const [a, b] = [Number(m[1]), Number(m[2])];
