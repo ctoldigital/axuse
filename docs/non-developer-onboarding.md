@@ -34,15 +34,14 @@ whether you want optional desktop control.
 Claude includes everything axuse needs to run. You also need Google Chrome or
 Microsoft Edge; Windows already has Edge.
 
-### ChatGPT (via the Codex app), Claude Code, Cursor or any other agent: one prompt
+### Codex, ChatGPT Work, Claude Code, Cursor or any other agent: one prompt
 
-ChatGPT Plus, Business and Enterprise include the Codex app, which can work on
-your computer. The ChatGPT chat window itself cannot install tools on your
-computer, so use Codex.
+axuse does not work in the chatgpt.com chat window, which cannot install tools on
+your computer. It works with the agents that run on your computer: Codex, ChatGPT Work, Claude Code, Claude Work, Meta Muse, OpenCode, Devin, Cursor, Kiro, Antigravity.
 
 1. Copy the install prompt from https://ax-use.com/#prompt (the full text is
    also at https://ax-use.com/install.md).
-2. Paste it into Codex (or Claude Code, Cursor, OpenCode and so on).
+2. Paste it into your agent (Codex, ChatGPT Work, Claude Code, Cursor, OpenCode and so on).
 3. Choose your browser and default profile when asked. Your existing profile
    holds logins for sites such as Airbnb and Google. Choose the Chrome or
    Edge extension to use those sessions, or a separate profile to sign in
