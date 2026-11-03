@@ -60,14 +60,20 @@ export async function captureScreenshot(conn, sessionId, { crop, budgetBytes = D
   let bytes = approxBytes(res.data);
   let usedQuality = quality;
   if (bytes > budgetBytes) {
-    // One automatic fallback pass, then fail honestly.
-    res = await conn.send("Page.captureScreenshot", { ...base, quality: RETRY_QUALITY }, sessionId);
-    usedQuality = RETRY_QUALITY;
-    bytes = approxBytes(res.data);
+    // One automatic fallback pass, then fail honestly. The fallback must
+    // only ever LOWER quality — retrying at a fixed 45 regardless of what
+    // was asked would raise (not shrink) the image when the caller already
+    // requested something below 45, defeating the point of a "fallback".
+    const retryQuality = Math.min(quality, RETRY_QUALITY);
+    if (retryQuality < quality) {
+      res = await conn.send("Page.captureScreenshot", { ...base, quality: retryQuality }, sessionId);
+      usedQuality = retryQuality;
+      bytes = approxBytes(res.data);
+    }
   }
   if (bytes > budgetBytes) {
     throw new AxError(Codes.SCREENSHOT_BUDGET_EXCEEDED,
-      `Screenshot is ${bytes} bytes, over the ${budgetBytes} byte budget even at quality ${RETRY_QUALITY}.`,
+      `Screenshot is ${bytes} bytes, over the ${budgetBytes} byte budget even at quality ${usedQuality}.`,
       { hint: "Pass crop:{x,y,w,h} to capture just the region you need — or prefer ax_observe (text snapshot) when pixels are not required.", retry: "never" });
   }
   const geometry = region.w
