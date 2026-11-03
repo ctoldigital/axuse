@@ -1,0 +1,150 @@
+{
+ "axdroid": "0.1.0",
+ "started": "2026-10-26T00:57:52",
+ "gates": [
+  {
+   "name": "G1 bridge",
+   "ok": true,
+   "ms": 33.1,
+   "note": null,
+   "device": {
+    "model": "SM-G990B2",
+    "manufacturer": "samsung",
+    "os": "Android 16",
+    "sdk": 36,
+    "display": {
+     "w": 1080,
+     "h": 2340,
+     "density": 3,
+     "rotation": 0
+    }
+   },
+   "foreground": "com.google.android.googlequicksearchbox",
+   "guard_mode": "ask"
+  },
+  {
+   "name": "G2 tree",
+   "ok": true,
+   "ms": 1594.4,
+   "note": "app: com.android.settings · 1080×2340px · changes 7632 · overlay: com.android.systemui, com.sec.android.app.launcher, com.android.systemui",
+   "nodes": 140,
+   "clickable": 10,
+   "with_resource_id": 99,
+   "observe_ms": 62.3
+  },
+  {
+   "name": "G3 semantic click",
+   "ok": true,
+   "ms": 10729.8,
+   "note": null,
+   "tapped": "About phone",
+   "via": "ax-click-ancestor",
+   "diff_lines": 114,
+   "retries": 0
+  },
+  {
+   "name": "G4 type+submit",
+   "ok": true,
+   "ms": 5663.2,
+   "note": "ACTION_SET_TEXT with device-side read-back verification",
+   "via": "ax-set-text",
+   "field": "com.android.settings.intelligence:id/search_src_text"
+  },
+  {
+   "name": "G5 gesture fallback",
+   "ok": true,
+   "ms": 1574.0,
+   "note": "blind tap named 'com.android.settings.intelligence:id/his' and proceeded",
+   "via": "gesture",
+   "point": [
+    540,
+    526
+   ]
+  },
+  {
+   "name": "G6 settle",
+   "ok": true,
+   "ms": 3132.4,
+   "note": null,
+   "changes_before": 7815,
+   "changes_after_home": 7824,
+   "changes_after_settle": 7824,
+   "settle_ms": 217.3
+  },
+  {
+   "name": "G7 custody",
+   "ok": true,
+   "ms": 191.7,
+   "note": null,
+   "refused_as": true,
+   "reads_while_stopped": true,
+   "acts_after_resume": true
+  },
+  {
+   "name": "G8 guard",
+   "ok": true,
+   "ms": 4248.6,
+   "note": null,
+   "target": "Delete manage",
+   "refused": true
+  },
+  {
+   "name": "G9 app sweep",
+   "ok": true,
+   "ms": 24114.2,
+   "note": "6/6 apps expose a rich tree",
+   "apps": [
+    {
+     "app": "com.samsung.android.calendar",
+     "name": "Calendar",
+     "nodes": 220,
+     "actionable": 10,
+     "framework": [],
+     "quality": "rich"
+    },
+    {
+     "app": "com.sec.android.app.camera",
+     "name": "Camera",
+     "nodes": 152,
+     "actionable": 23,
+     "framework": [],
+     "quality": "rich"
+    },
+    {
+     "app": "com.sec.android.gallery3d",
+     "name": "Gallery",
+     "nodes": 184,
+     "actionable": 12,
+     "framework": [],
+     "quality": "rich"
+    },
+    {
+     "app": "com.samsung.android.messaging",
+     "name": "Messages",
+     "nodes": 301,
+     "actionable": 15,
+     "framework": [],
+     "quality": "rich"
+    },
+    {
+     "app": "com.sec.android.app.myfiles",
+     "name": "My Files",
+     "nodes": 209,
+     "actionable": 11,
+     "framework": [],
+     "quality": "rich"
+    },
+    {
+     "app": "com.samsung.android.app.contacts",
+     "name": "Contacts",
+     "nodes": 278,
+     "actionable": 9,
+     "framework": [],
+     "quality": "rich"
+    }
+   ]
+  }
+ ],
+ "ok": true,
+ "summary": "9/9 passed"
+}

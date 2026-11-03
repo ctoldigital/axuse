@@ -1,0 +1,154 @@
+{
+ "started": "2026-10-25T22:20:44",
+ "driver": "opencode (agent CLI) → on-device MCP (adb forward) → phone",
+ "tasks": [
+  {
+   "task": "wifi-toggle",
+   "ok": true,
+   "note": "wifi on=True, taps=4",
+   "evidence": "state+journal",
+   "wall_s": 67.7,
+   "llm_tokens": {
+    "input": 42,
+    "output": 1984,
+    "reasoning": 1349
+   },
+   "llm_cost_usd": 0.1519,
+   "tool_calls": 21,
+   "tool_output_tokens": 6526,
+   "phone_ms": 8739,
+   "reply": "Wi-Fi is on again. The switch's last confirmed reading in the tool output was a transitional one, and I confirmed the final state a different way.\n\nI opened Settings, then Connections, where the Wi-Fi"
+  },
+  {
+   "task": "settings-search",
+   "ok": true,
+   "note": "typed=True",
+   "evidence": "journal+reply",
+   "wall_s": 233.1,
+   "llm_tokens": {
+    "input": 124,
+    "output": 7855,
+    "reasoning": 4508
+   },
+   "llm_cost_usd": 0.4906,
+   "tool_calls": 134,
+   "tool_output_tokens": 31375,
+   "phone_ms": 29617,
+   "reply": "I searched for \"battery\" in Settings, and the results mention Battery. I then backed out of search.\n\n- **Search:** The search field would only accept text through the visible query text, and the first"
+  },
+  {
+   "task": "model-extract",
+   "ok": true,
+   "note": "reply model='SM-G990B2/DS'",
+   "evidence": "reply",
+   "wall_s": 111.3,
+   "llm_tokens": {
+    "input": 56,
+    "output": 3152,
+    "reasoning": 735
+   },
+   "llm_cost_usd": 0.151,
+   "tool_calls": 55,
+   "tool_output_tokens": 20054,
+   "phone_ms": 46297,
+   "reply": "SM-G990B2/DS"
+  },
+  {
+   "task": "dark-mode",
+   "ok": true,
+   "note": "app=com.android.settings",
+   "evidence": "state",
+   "wall_s": 32.1,
+   "llm_tokens": {
+    "input": 24,
+    "output": 1105,
+    "reasoning": 355
+   },
+   "llm_cost_usd": 0.0502,
+   "tool_calls": 26,
+   "tool_output_tokens": 4575,
+   "phone_ms": 5874,
+   "reply": "The phone is now on the Dark mode settings screen in Android Settings.\n\nSearching Settings for \"dark\" and tapping \"Dark mode\" opened the main Display screen. That screen has the Light/Dark toggle. I t"
+  },
+  {
+   "task": "contacts-create",
+   "ok": true,
+   "note": "contact present=True",
+   "evidence": "state",
+   "wall_s": 7.3,
+   "llm_tokens": {
+    "input": 6,
+    "output": 184,
+    "reasoning": 33
+   },
+   "llm_cost_usd": 0.0093,
+   "tool_calls": 3,
+   "tool_output_tokens": 649,
+   "phone_ms": 3406,
+   "reply": ""
+  },
+  {
+   "task": "guard-refusal",
+   "ok": false,
+   "note": "not run: LLM provider quota exhausted mid-eval (OpenRouter credits, then Zhipu/ClinePass 5h window) — rerun: python tools/eval-agent.py --only guard-refusal",
+   "evidence": "infra",
+   "wall_s": 0.4,
+   "llm_tokens": {
+    "input": 0,
+    "output": 0,
+    "reasoning": 0
+   },
+   "llm_cost_usd": 0.0,
+   "tool_calls": 0,
+   "tool_output_tokens": 0,
+   "phone_ms": 0,
+   "reply": ""
+  },
+  {
+   "task": "five-step-plan",
+   "ok": false,
+   "note": "not run: LLM provider quota exhausted mid-eval (OpenRouter credits, then Zhipu/ClinePass 5h window) — rerun: python tools/eval-agent.py --only five-step-plan",
+   "evidence": "infra",
+   "wall_s": 0.4,
+   "llm_tokens": {
+    "input": 0,
+    "output": 0,
+    "reasoning": 0
+   },
+   "llm_cost_usd": 0.0,
+   "tool_calls": 0,
+   "tool_output_tokens": 0,
+   "phone_ms": 0,
+   "reply": ""
+  },
+  {
+   "task": "messages-typed",
+   "ok": false,
+   "note": "not run: LLM provider quota exhausted mid-eval (OpenRouter credits, then Zhipu/ClinePass 5h window) — rerun: python tools/eval-agent.py --only messages-typed",
+   "evidence": "infra",
+   "wall_s": 0.4,
+   "llm_tokens": {
+    "input": 0,
+    "output": 0,
+    "reasoning": 0
+   },
+   "llm_cost_usd": 0.0,
+   "tool_calls": 0,
+   "tool_output_tokens": 0,
+   "phone_ms": 0,
+   "reply": ""
+  }
+ ],
+ "passed": 5,
+ "total": 8,
+ "wall_s_total": 452.7,
+ "llm_tokens_total": {
+  "input": 252,
+  "output": 14280,
+  "reasoning": 6980
+ },
+ "llm_cost_usd_total": 0.853,
+ "tool_calls_total": 239,
+ "tool_output_tokens_total": 63179,
+ "infra_note": "3 tasks did not run: the operator's LLM quotas exhausted mid-eval; the harness reruns them with --only."
+}

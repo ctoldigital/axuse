@@ -20,6 +20,43 @@ agent, paste the [install prompt](https://ax-use.com/install.md) and the
 agent sets axuse up for you. See the
 [non-developer guide](docs/non-developer-onboarding.md).
 
+## Three ways to let an agent work for you
+
+One install, three surfaces. In all three the agent reads the screen as **text from the accessibility tree**, not as a screenshot it has to interpret, so it is faster, cheaper and less likely to misclick.
+
+### Best way to get started
+
+Let your agent do it. Paste one line into Codex, Claude Code, ChatGPT Work, Cursor, OpenCode, Devin, Antigravity or any MCP-capable agent:
+
+- Browser use and computer use: *Install axuse by following https://ax-use.com/install.md*
+- Phone use (Android): *Install axdroid by following https://ax-use.com/install-phone.md*
+
+Claude desktop users can instead download `axuse.mcpb` from [ax-use.com](https://ax-use.com) and double-click it. Developers: see the [Quick start](#quick-start) below.
+
+### Browser use
+
+Your agent drives Chrome, Edge or Chromium: your signed-in daily browser through the extension bridge, or a clean one.
+
+- **Why it is better:** it reads the DOM and accessibility tree over CDP as a compact text snapshot with stable element refs, and every action returns only what changed. Input is trusted CDP input, and failures are typed errors with retry hints. See [why this beats screenshot CUA](#why-this-is-faster-and-more-reliable-than-screenshot-cua).
+- **Benchmark:** on 16 server-scored tasks in the same harness and model, axuse's median task takes **17 s** against 26 s for Codex's own Chrome extension and 56 s for browser-use, using about half the tokens, with the same accuracy. [Details](#benchmark).
+- **Get started:** [Quick start](#quick-start).
+
+### Computer use
+
+Your agent drives desktop apps: Windows is verified, macOS is an explicit opt-in with native permission checks, Linux runs over X11 (and on display-less Ubuntu servers, see [server mode](#servers-no-desktop-ubuntu-server-lane)).
+
+- **Why it is better:** the same design as browser use. The agent reads each app's operating-system accessibility tree as text and acts on refs; a screenshot is only a fallback for canvases and other screens with no tree.
+- **Benchmark:** we have not published a head-to-head desktop benchmark yet. The browser numbers above are the measured evidence for the shared design.
+- **Get started:** the install line above, then the [tool surface](#tool-surface) for the desktop tools.
+
+### Phone use (Android)
+
+Your agent uses an Android phone through [axdroid](phone-use/android/README.md), an MCP server plus a phone app. axphone for iPhone is coming soon.
+
+- **Why it is better:** it reads the phone's own accessibility tree as text, so no vision model is needed. A guarded screenshot is a fallback for screens with no readable text, and the phone's owner can switch it off.
+- **Benchmark:** a Codex agent (gpt-6.1-terra) using axdroid completed **116 of 116** tasks of the official AndroidWorld suite, repeated three times. Median 66 s and 223k input tokens per task, and no screenshots needed. [Results](phone-use/android/androidworld/README.md).
+- **Get started:** the `install-phone.md` line above. You need an Android 8+ phone, a USB cable and an MCP-capable agent.
+
 ## Proven in production
 
 axuse is maintained by **CTOL Digital Solutions**
@@ -141,6 +178,11 @@ local dev app) has been run once so far: axuse 7/7; Codex + Chrome failed 2
 by stopping to ask for confirmation; browser-use failed 1. Method, anti-cheat
 rules and how to reproduce: [`bench/suite/README.md`](bench/suite/README.md).
 Install footprint and setup comparison: [`bench/suite/EASE.md`](bench/suite/EASE.md).
+
+**Phone use (Android).** A Codex agent (gpt-6.1-terra) using axdroid completed
+all 116 tasks of the official AndroidWorld suite, repeated three times: median
+66 s and 223k input tokens per task, 1,576 tool calls, no screenshots needed.
+Per-task numbers and method: [`phone-use/android/androidworld/`](phone-use/android/androidworld/README.md).
 
 ## Why this is faster and more reliable than screenshot CUA
 
