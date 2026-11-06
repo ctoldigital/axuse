@@ -106,7 +106,7 @@ codex mcp add axuse -- node /abs/path/axuse/src/cli.js mcp
 claude mcp add --scope user axuse -- node /abs/path/axuse/src/cli.js mcp
 
 # OpenCode, Antigravity, any other MCP host: print the config block to paste
-node src/cli.js print-config --harness opencode   # or agy | generic
+node src/cli.js print-config --harness opencode   # or agy | zed | generic
 ```
 
 **3. Ask for something in the browser**
@@ -198,12 +198,13 @@ Per-task numbers and method: [`phone-use/android/androidworld/`](phone-use/andro
 ## Install into a harness
 
 ```bash
-node src/cli.js print-config --harness codex       # or claude-code | opencode | agy | generic
+node src/cli.js print-config --harness codex       # or claude-code | opencode | agy | zed | generic
 ```
 
 - **Codex** — append the printed `[mcp_servers.axuse]` block to `~/.codex/config.toml`
 - **Claude Code** — `claude mcp add --scope user axuse -- node <path>/src/cli.js mcp`
 - **OpenCode** — merge the printed `mcp` block into `opencode.json`
+- **Zed** — merge the printed `context_servers` block into `settings.json`
 - **Antigravity / any MCP host** — the printed `mcpServers` block
 
 Verify the environment: `node src/cli.js doctor`.
